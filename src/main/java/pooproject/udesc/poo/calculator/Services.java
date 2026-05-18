@@ -5,11 +5,11 @@ import pooproject.udesc.poo.calculator.Validators;
 
 public class Services {
     
-    private Float number1;
-    private Float number2;
+    private Integer number1;
+    private Integer number2;
     private Validators validator = new Validators();
     
-    public Services(Float number1, Float number2) {
+    public Services(Integer number1, Integer number2) {
         this.number1 = number1;
         this.number2 = number2;
 
@@ -17,19 +17,19 @@ public class Services {
         this.validator.validateInputLimit(this.number2);
     }
     
-    public Float sum() {
+    public Integer sum() {
         return this.number1 + this.number2;
     }
     
-    public Float subtraction() {
+    public Integer subtraction() {
         return this.number1 - this.number2;
     }
     
-    public Float multiplication() {
+    public Integer multiplication() {
         return this.number1 * this.number2;
     }
     
-    public Float division() {
+    public Integer division() {
         this.validator.validateDivider(this.number2);
         return this.number1 / this.number2;
     }

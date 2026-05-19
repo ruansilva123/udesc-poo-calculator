@@ -31,6 +31,6 @@ public class Services {
     
     public Integer division() {
         this.validator.validateDivider(this.number2);
-        return this.number1 / this.number2;
+        return (int)(this.number1 / this.number2);
     }
 }

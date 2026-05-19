@@ -1,17 +1,54 @@
 package pooproject.udesc.poo.calculator;
 
+import java.awt.Color;
+import pooproject.udesc.poo.calculator.Services;
+
 /**
  *
  * @author ruan-silva
  */
 public class Calculator extends javax.swing.JFrame {
     
+    private enum Methods {
+        NONE,
+        SUM,
+        SUBTRACTION,
+        MULTIPLICATION,
+        DIVISION,
+        SPECIAL
+    }
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Calculator.class.getName());
-
+    private Integer number1;
+    private Integer number2;
+    private String errorMessage;
+    private Methods method;
+    private Boolean editingFirstNumber;
+    // Essa variável será usada para determinar se é o primeiro ou o segundo número que está sendo editado
+    // Para salvar os calculos sem precisar de string, dá para pegar o valor anterior, multiplicar por 10 e somar mais o novo número
+    // Ex: 5 e bai entrar mais 4 -> 50 x 10 + 4 
+    // Adicionar validação de método -> método diferente de NONE então não poderá selecionar um outro método
 
     public Calculator() {
         initComponents();
+        setInitialData();
+        
+        // Frame settings
+        this.setResizable(false);
+        this.setTitle("Toy Story Calculator");
+        
+        // Added custom modifies to scape of NetBeans UI builder fixes.
+        CalculatorImageBody.setOpaque(false);
+        CalculatorImageBody.setBackground(new Color(242, 242, 242, 190));
     }
+    
+    // Calculator methods
+    private void setInitialData() {
+        this.number1 = null;
+        this.number2 = null;
+        this.errorMessage = null;
+        this.method = Methods.NONE;
+    } 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -25,7 +62,7 @@ public class Calculator extends javax.swing.JFrame {
         CalculatorImageBody = new javax.swing.JPanel();
         CalculatorBody = new javax.swing.JPanel();
         CalculatorWindow = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        ClearButton = new javax.swing.JButton();
         ButtonNumberOne = new javax.swing.JButton();
         ButtonNumberTwo = new javax.swing.JButton();
         ButtonNumberThree = new javax.swing.JButton();
@@ -36,7 +73,7 @@ public class Calculator extends javax.swing.JFrame {
         ButtonNumberEight = new javax.swing.JButton();
         ButtonNumberNine = new javax.swing.JButton();
         ButtonNumberZero = new javax.swing.JButton();
-        DotButton = new javax.swing.JButton();
+        SpecialButton = new javax.swing.JButton();
         EqualsButton = new javax.swing.JButton();
         SumButton = new javax.swing.JButton();
         SubtractionButton = new javax.swing.JButton();
@@ -47,12 +84,12 @@ public class Calculator extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         CalculatorImageBody.setBackground(new java.awt.Color(241, 247, 251));
+        CalculatorImageBody.setLayout(null);
 
-        CalculatorBody.setBackground(new java.awt.Color(241, 247, 251));
-        CalculatorBody.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        CalculatorBody.setBorder(javax.swing.BorderFactory.createLineBorder(null));
 
         CalculatorWindow.setBackground(new java.awt.Color(204, 255, 255));
-        CalculatorWindow.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.darkGray, java.awt.Color.darkGray, java.awt.Color.lightGray, java.awt.Color.lightGray));
+        CalculatorWindow.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.darkGray, java.awt.Color.darkGray, java.awt.Color.lightGray, java.awt.Color.lightGray));
 
         javax.swing.GroupLayout CalculatorWindowLayout = new javax.swing.GroupLayout(CalculatorWindow);
         CalculatorWindow.setLayout(CalculatorWindowLayout);
@@ -65,95 +102,106 @@ public class Calculator extends javax.swing.JFrame {
             .addGap(0, 121, Short.MAX_VALUE)
         );
 
-        jButton1.setBackground(new java.awt.Color(0, 82, 232));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Clear");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        ClearButton.setBackground(new java.awt.Color(0, 82, 232));
+        ClearButton.setForeground(new java.awt.Color(255, 255, 255));
+        ClearButton.setText("Clear");
+        ClearButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ClearButton.addActionListener();
 
         ButtonNumberOne.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberOne.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberOne.setText("1");
-        ButtonNumberOne.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberOne.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberOne.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberOne.addActionListener();
 
         ButtonNumberTwo.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberTwo.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberTwo.setText("2");
-        ButtonNumberTwo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberTwo.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberTwo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberTwo.addActionListener();
 
         ButtonNumberThree.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberThree.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberThree.setText("3");
-        ButtonNumberThree.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
-        ButtonNumberThree.addActionListener(this::ButtonNumberThreeActionPerformed);
+        ButtonNumberThree.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberThree.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberThree.addActionListener();
 
         ButtonNumberFour.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberFour.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberFour.setText("4");
-        ButtonNumberFour.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberFour.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberFour.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberFour.addActionListener();
 
         ButtonNumberFive.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberFive.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberFive.setText("5");
-        ButtonNumberFive.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberFive.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberFive.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberFive.addActionListener();
 
         ButtonNumberSix.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberSix.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberSix.setText("6");
-        ButtonNumberSix.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberSix.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberSix.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberSix.addActionListener();
 
         ButtonNumberSeven.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberSeven.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberSeven.setText("7");
-        ButtonNumberSeven.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberSeven.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberSeven.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberSeven.addActionListener();
 
         ButtonNumberEight.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberEight.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberEight.setText("8");
-        ButtonNumberEight.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberEight.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberEight.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberEight.addActionListener();
 
         ButtonNumberNine.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberNine.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberNine.setText("9");
-        ButtonNumberNine.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberNine.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberNine.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberNine.addActionListener();
 
         ButtonNumberZero.setBackground(new java.awt.Color(204, 204, 204));
-        ButtonNumberZero.setForeground(new java.awt.Color(0, 0, 0));
         ButtonNumberZero.setText("0");
-        ButtonNumberZero.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberZero.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        ButtonNumberZero.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ButtonNumberZero.addActionListener();
 
-        DotButton.setBackground(new java.awt.Color(204, 204, 204));
-        DotButton.setForeground(new java.awt.Color(0, 0, 0));
-        DotButton.setText(".");
-        DotButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        SpecialButton.setBackground(new java.awt.Color(204, 204, 204));
+        SpecialButton.setText("?");
+        SpecialButton.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        SpecialButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SpecialButton.addActionListener();
 
         EqualsButton.setBackground(new java.awt.Color(204, 204, 204));
-        EqualsButton.setForeground(new java.awt.Color(0, 0, 0));
         EqualsButton.setText("=");
-        EqualsButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        EqualsButton.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        EqualsButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         SumButton.setBackground(new java.awt.Color(204, 204, 204));
-        SumButton.setForeground(new java.awt.Color(0, 0, 0));
         SumButton.setText("+");
-        SumButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
-        SumButton.addActionListener(this::SumButtonActionPerformed);
+        SumButton.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        SumButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SumButton.addActionListener();
 
         SubtractionButton.setBackground(new java.awt.Color(204, 204, 204));
-        SubtractionButton.setForeground(new java.awt.Color(0, 0, 0));
         SubtractionButton.setText("-");
-        SubtractionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
-        SubtractionButton.addActionListener(this::SubtractionButtonActionPerformed);
+        SubtractionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        SubtractionButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SubtractionButton.addActionListener();
 
         MultiplicationButton.setBackground(new java.awt.Color(204, 204, 204));
-        MultiplicationButton.setForeground(new java.awt.Color(0, 0, 0));
         MultiplicationButton.setText("*");
-        MultiplicationButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
-        MultiplicationButton.addActionListener(this::MultiplicationButtonActionPerformed);
+        MultiplicationButton.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        MultiplicationButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        MultiplicationButton.addActionListener();
 
         DivisionButton.setBackground(new java.awt.Color(204, 204, 204));
-        DivisionButton.setForeground(new java.awt.Color(0, 0, 0));
         DivisionButton.setText("/");
-        DivisionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
-        DivisionButton.addActionListener(this::DivisionButtonActionPerformed);
+        DivisionButton.setBorder(javax.swing.BorderFactory.createBevelBorder(null, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
+        DivisionButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DivisionButton.addActionListener();
 
         javax.swing.GroupLayout CalculatorBodyLayout = new javax.swing.GroupLayout(CalculatorBody);
         CalculatorBody.setLayout(CalculatorBodyLayout);
@@ -168,7 +216,7 @@ public class Calculator extends javax.swing.JFrame {
                             .addComponent(ButtonNumberTwo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(CalculatorBodyLayout.createSequentialGroup()
                                 .addGroup(CalculatorBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(DotButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(SpecialButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(ButtonNumberFour, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(ButtonNumberOne, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(ButtonNumberSeven, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -193,7 +241,7 @@ public class Calculator extends javax.swing.JFrame {
                                     .addComponent(DivisionButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CalculatorBodyLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(ClearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(25, 25, 25))
         );
         CalculatorBodyLayout.setVerticalGroup(
@@ -202,7 +250,7 @@ public class Calculator extends javax.swing.JFrame {
                 .addContainerGap(56, Short.MAX_VALUE)
                 .addComponent(CalculatorWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ClearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(CalculatorBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(CalculatorBodyLayout.createSequentialGroup()
@@ -232,7 +280,7 @@ public class Calculator extends javax.swing.JFrame {
                             .addGroup(CalculatorBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(CalculatorBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(ButtonNumberZero, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(DotButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(SpecialButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(EqualsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(CalculatorBodyLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -242,54 +290,31 @@ public class Calculator extends javax.swing.JFrame {
                 .addGap(23, 23, 23))
         );
 
-        BackgoundImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/toystory.jpg"))); // NOI18N
+        CalculatorImageBody.add(CalculatorBody);
+        CalculatorBody.setBounds(30, 40, 414, 605);
+        CalculatorBody.getAccessibleContext().setAccessibleName("");
 
-        javax.swing.GroupLayout CalculatorImageBodyLayout = new javax.swing.GroupLayout(CalculatorImageBody);
-        CalculatorImageBody.setLayout(CalculatorImageBodyLayout);
-        CalculatorImageBodyLayout.setHorizontalGroup(
-            CalculatorImageBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CalculatorImageBodyLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(BackgoundImage, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(CalculatorBody, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 27, Short.MAX_VALUE))
-        );
-        CalculatorImageBodyLayout.setVerticalGroup(
-            CalculatorImageBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CalculatorImageBodyLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(CalculatorImageBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BackgoundImage, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CalculatorImageBodyLayout.createSequentialGroup()
-                        .addComponent(CalculatorBody, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)))
-                .addContainerGap(10, Short.MAX_VALUE))
-        );
+        BackgoundImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/toystory.jpg"))); // NOI18N
+        CalculatorImageBody.add(BackgoundImage);
+        BackgoundImage.setBounds(-4, -2, 490, 680);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(CalculatorImageBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(CalculatorImageBody, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(CalculatorImageBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(CalculatorImageBody, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void ClearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearButtonActionPerformed
+        this.setInitialData();
+    }//GEN-LAST:event_ClearButtonActionPerformed
 
     private void ButtonNumberThreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberThreeActionPerformed
         // TODO add your handling code here:
@@ -310,6 +335,46 @@ public class Calculator extends javax.swing.JFrame {
     private void DivisionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DivisionButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_DivisionButtonActionPerformed
+
+    private void SpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SpecialButtonActionPerformed
+
+    private void ButtonNumberOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberOneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberOneActionPerformed
+
+    private void ButtonNumberTwoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberTwoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberTwoActionPerformed
+
+    private void ButtonNumberFourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberFourActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberFourActionPerformed
+
+    private void ButtonNumberFiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberFiveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberFiveActionPerformed
+
+    private void ButtonNumberSixActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberSixActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberSixActionPerformed
+
+    private void ButtonNumberSevenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberSevenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberSevenActionPerformed
+
+    private void ButtonNumberEightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberEightActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberEightActionPerformed
+
+    private void ButtonNumberNineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberNineActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberNineActionPerformed
+
+    private void ButtonNumberZeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberZeroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButtonNumberZeroActionPerformed
 
     /**
      * @param args the command line arguments
@@ -351,12 +416,12 @@ public class Calculator extends javax.swing.JFrame {
     private javax.swing.JPanel CalculatorBody;
     private javax.swing.JPanel CalculatorImageBody;
     private javax.swing.JPanel CalculatorWindow;
+    private javax.swing.JButton ClearButton;
     private javax.swing.JButton DivisionButton;
-    private javax.swing.JButton DotButton;
     private javax.swing.JButton EqualsButton;
     private javax.swing.JButton MultiplicationButton;
+    private javax.swing.JButton SpecialButton;
     private javax.swing.JButton SubtractionButton;
     private javax.swing.JButton SumButton;
-    private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables
 }

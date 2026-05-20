@@ -18,6 +18,12 @@ public class Validators {
         }
     }
     
+    private class TwoOrMoreMethods extends RuntimeException {
+        public TwoOrMoreMethods() {
+            super("Only one method is denied per equation!");
+        }
+    }
+    
     // Validators
     public void validateDivider(Integer number) {
         if (number == 0) throw new InvalidDivider(number);
@@ -25,5 +31,9 @@ public class Validators {
     
     public void validateInputLimit(Integer number) {
         if (number >= 1000) throw new InvalidInputLimit(number);
+    }
+    
+    public void validateJustOneMethod(Methods method, Methods newMethod) {
+        if (method != Methods.NONE && newMethod != Methods.NONE) throw new TwoOrMoreMethods();
     }
 }

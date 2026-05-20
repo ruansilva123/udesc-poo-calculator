@@ -69,7 +69,7 @@ public class Calculator extends javax.swing.JFrame {
             
             this.equation += methodString;
         } catch (Exception e) {
-            this.errorMessage = e.toString();
+            this.errorMessage = e.getMessage();
         }
         setDisplayOutput();
     }
@@ -445,7 +445,7 @@ public class Calculator extends javax.swing.JFrame {
             this.equation = this.number1.toString();
             this.errorMessage = " ";
         } catch (Exception e) {
-            this.errorMessage = e.toString();
+            this.errorMessage = e.getMessage();
         }
         setDisplayOutput();
     }//GEN-LAST:event_EqualsButtonActionPerformed

@@ -14,10 +14,6 @@ public class Calculator extends javax.swing.JFrame {
     private String equation;
     private String errorMessage;
     private Validators validator = new Validators();
-    // Essa variável será usada para determinar se é o primeiro ou o segundo número que está sendo editado
-    // Para salvar os calculos sem precisar de string, dá para pegar o valor anterior, multiplicar por 10 e somar mais o novo número
-    // Ex: 5 e bai entrar mais 4 -> 50 x 10 + 4 
-    // Adicionar validação de método -> método diferente de NONE então não poderá selecionar um outro método
 
     public Calculator() {
         initComponents();
@@ -38,7 +34,7 @@ public class Calculator extends javax.swing.JFrame {
         this.number1 = 0;
         this.number2 = 0;
         this.method = Methods.NONE;
-        this.editingFirstNumber = false;
+        this.editingFirstNumber = true;
         this.equation = " ";
         this.errorMessage = " ";
         setDisplayOutput();
@@ -55,19 +51,19 @@ public class Calculator extends javax.swing.JFrame {
     
     private void setNewOpetation(Methods newMethod) {
         try {
-            validator.validateJustOneMethod(this.method, newMethod);
+            this.validator.validateJustOneMethod(this.method, newMethod);
 
             this.method = newMethod;
             this.editingFirstNumber = false;
             
             String methodString = "";
-            if (newMethod.equals(Methods.SUM)){
+            if (newMethod == Methods.SUM){
                 methodString = " + ";
-            } else if (newMethod.equals(Methods.SUBTRACTION)) {
+            } else if (newMethod == Methods.SUBTRACTION) {
                 methodString = " - ";
-            } else if (newMethod.equals(Methods.MULTIPLICATION)) {
+            } else if (newMethod == Methods.MULTIPLICATION) {
                 methodString = " * ";
-            } else if (newMethod.equals(Methods.DIVISION)) {
+            } else if (newMethod == Methods.DIVISION) {
                 methodString = " / ";
             }
             
@@ -428,7 +424,30 @@ public class Calculator extends javax.swing.JFrame {
     }//GEN-LAST:event_DivisionButtonActionPerformed
 
     private void EqualsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EqualsButtonActionPerformed
-        // TODO add your handling code here:
+        try {
+            this.validator.validateNoneSelectedMethod(this.method);
+            
+            Services service = new Services(this.number1, this.number2);
+            
+            if (this.method == Methods.SUM) {
+                this.number1 = service.sum();
+            } else if (this.method == Methods.SUBTRACTION) {
+                this.number1 = service.subtraction();
+            } else if (this.method == Methods.MULTIPLICATION) {
+                this.number1 = service.multiplication();
+            } else if (this.method == Methods.DIVISION) {
+                this.number1 = service.division();
+            }
+            
+            this.number2 = 0;
+            this.method = Methods.NONE;
+            this.editingFirstNumber = true;
+            this.equation = this.number1.toString();
+            this.errorMessage = " ";
+        } catch (Exception e) {
+            this.errorMessage = e.toString();
+        }
+        setDisplayOutput();
     }//GEN-LAST:event_EqualsButtonActionPerformed
 
     private void SpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialButtonActionPerformed
@@ -438,7 +457,6 @@ public class Calculator extends javax.swing.JFrame {
     private void ButtonNumberOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberOneActionPerformed
         this.equation += "1";
         setNumber(1);
-        
     }//GEN-LAST:event_ButtonNumberOneActionPerformed
 
     private void ButtonNumberTwoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberTwoActionPerformed

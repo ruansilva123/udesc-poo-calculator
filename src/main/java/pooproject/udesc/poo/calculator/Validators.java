@@ -24,6 +24,12 @@ public class Validators {
         }
     }
     
+    private class EmptyMethod extends RuntimeException {
+        public EmptyMethod() {
+            super("No method selected!");
+        }
+    }
+    
     // Validators
     public void validateDivider(Integer number) {
         if (number == 0) throw new InvalidDivider(number);
@@ -35,5 +41,9 @@ public class Validators {
     
     public void validateJustOneMethod(Methods method, Methods newMethod) {
         if (method != Methods.NONE && newMethod != Methods.NONE) throw new TwoOrMoreMethods();
+    }
+    
+    public void validateNoneSelectedMethod(Methods method) {
+        if (method == Methods.NONE) throw new EmptyMethod();
     }
 }

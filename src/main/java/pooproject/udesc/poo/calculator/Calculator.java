@@ -1,5 +1,9 @@
 package pooproject.udesc.poo.calculator;
 
+import java.net.URI;
+import java.awt.Desktop;
+
+
 /**
  *
  * @author ruan-silva
@@ -249,7 +253,7 @@ public class Calculator extends javax.swing.JFrame {
 
         SpecialButton.setBackground(new java.awt.Color(204, 204, 204));
         SpecialButton.setForeground(new java.awt.Color(0, 0, 0));
-        SpecialButton.setText("?");
+        SpecialButton.setText("GitHub");
         SpecialButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.lightGray, java.awt.Color.darkGray, java.awt.Color.darkGray));
         SpecialButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         SpecialButton.addActionListener(this::SpecialButtonActionPerformed);
@@ -451,7 +455,13 @@ public class Calculator extends javax.swing.JFrame {
     }//GEN-LAST:event_EqualsButtonActionPerformed
 
     private void SpecialButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialButtonActionPerformed
-        // TODO add your handling code here:
+        try {
+            URI uri = new URI("https://github.com/ruansilva123/udesc-poo-calculator");
+            Desktop.getDesktop().browse(uri);
+        } catch(Exception e) {
+            this.errorMessage = "Error to open GitHub project!";
+            setDisplayOutput();
+        }
     }//GEN-LAST:event_SpecialButtonActionPerformed
 
     private void ButtonNumberOneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNumberOneActionPerformed

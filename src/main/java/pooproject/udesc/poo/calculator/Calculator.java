@@ -448,6 +448,8 @@ public class Calculator extends javax.swing.JFrame {
             this.editingFirstNumber = true;
             this.equation = this.number1.toString();
             this.errorMessage = " ";
+            
+            System.out.println("Result of operation: " + this.number1);
         } catch (Exception e) {
             this.errorMessage = e.getMessage();
         }

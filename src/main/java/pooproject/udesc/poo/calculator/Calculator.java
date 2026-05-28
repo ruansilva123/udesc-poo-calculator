@@ -15,6 +15,8 @@ public class Calculator extends javax.swing.JFrame {
     private Integer number2;
     private Methods method;
     private Boolean editingFirstNumber;
+    private Boolean firstNumberNegative;
+    private Boolean secondNumberNegative;
     private String equation;
     private String errorMessage;
     private Validators validator = new Validators();
@@ -39,6 +41,8 @@ public class Calculator extends javax.swing.JFrame {
         this.number2 = 0;
         this.method = Methods.NONE;
         this.editingFirstNumber = true;
+        this.firstNumberNegative = false;
+        this.secondNumberNegative = false;
         this.equation = " ";
         this.errorMessage = " ";
         setDisplayOutput();
@@ -46,9 +50,13 @@ public class Calculator extends javax.swing.JFrame {
 
     private void setNumber(Integer newInput) {
         if (this.editingFirstNumber) {
-            this.number1 = this.number1 * 10 + newInput;
+            this.number1 = this.firstNumberNegative
+                ? this.number1 * 10 - newInput
+                : this.number1 * 10 + newInput;
         } else {
-            this.number2 = this.number2 * 10 + newInput;
+            this.number2 = this.secondNumberNegative
+                ? this.number2 * 10 - newInput
+                : this.number2 * 10 + newInput;
         }
         setDisplayOutput();
     }
@@ -413,8 +421,21 @@ public class Calculator extends javax.swing.JFrame {
     }//GEN-LAST:event_SumButtonActionPerformed
 
     private void SubtractionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubtractionButtonActionPerformed
-        Methods newMethod = Methods.SUBTRACTION;
-        setNewOpetation(newMethod);
+        boolean negativateNumber = this.editingFirstNumber
+                ? (this.number1 == 0 && !this.firstNumberNegative)
+                : (this.number2 == 0 && !this.secondNumberNegative);
+
+        if (negativateNumber) {
+            if (this.editingFirstNumber) {
+                this.firstNumberNegative = true;
+            } else {
+                this.secondNumberNegative = true;
+            }
+            this.equation += "-";
+            setDisplayOutput();
+        } else {
+            setNewOpetation(Methods.SUBTRACTION);
+        }
     }//GEN-LAST:event_SubtractionButtonActionPerformed
 
     private void MultiplicationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MultiplicationButtonActionPerformed
@@ -446,6 +467,8 @@ public class Calculator extends javax.swing.JFrame {
             this.number2 = 0;
             this.method = Methods.NONE;
             this.editingFirstNumber = true;
+            this.firstNumberNegative = this.number1 < 0;
+            this.secondNumberNegative = false;
             this.equation = this.number1.toString();
             this.errorMessage = " ";
             
